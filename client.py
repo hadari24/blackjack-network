@@ -97,7 +97,7 @@ def listen_to_offer():
     except AttributeError:
         udp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-    udp_sock.bind(("<broadcast>", UDP_PORT))
+    udp_sock.bind(("", UDP_PORT))
 
     print("client started, listening for offer requests...") # "player looking for dealer to play with..."
 
@@ -238,7 +238,7 @@ def main():
                     elif game_result == GAME_RESULT_TIE:
                         ties += 1
 
-                    print(f"Round {round_idx + 1} result: {result_to_str(game_result)}")
+                    print(f"Round {round_idx + 1} result: {result_to_str(game_result)}\n")
                     break
 
             print("Server finished all rounds.")
@@ -250,7 +250,9 @@ def main():
         finally:
             if sock:
                 sock.close()
-            print(f"Session summary: wins={wins}, losses={losses}, ties={ties}")
+            print(f"Game summary: wins={wins}, losses={losses}, ties={ties}")
+            win_rate = wins / rounds
+            print(f"finished playing {rounds} rounds, win rate {win_rate}")
             print("!!! Looking for a new server !!!\n")
             
 if __name__ == "__main__":

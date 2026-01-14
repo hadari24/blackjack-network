@@ -364,12 +364,14 @@ def run_single_threaded_server():
     server_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_sock.bind(("", SERVER_PORT))
+    ip_addr = server_sock.getsockname()[0]
     server_sock.listen(1)
 
     # timeout to get the server from getting stuck in .accept(), it alows us to wake up every sec and send another UDP offer
     server_sock.settimeout(1.0)
 
-    print(f"Server started, listening on IP address... (TCP port {SERVER_PORT})")
+    
+    print(f"Server started, listening on IP address {ip_addr}")
 
     while True:
         client_sock = None
@@ -377,13 +379,13 @@ def run_single_threaded_server():
 
         # wait and broadcast loop
         # we stay in this loop until a client connects
-        print("[UDP] broadcasting offers and waiting for client...")
+        print("broadcasting offers and waiting for client...")
 
         while True:
             try:
                 # sending UDP offer for connection
                 offer_msg = pack_offer(SERVER_PORT, SERVER_NAME)
-                udp_sock.sendto(offer_msg, ('<broadcast>', UDP_DEST_PORT))
+                udp_sock.sendto(offer_msg, ('255.255.255.255', UDP_DEST_PORT))
 
                 # wait a sec to see if someone connects
                 # if no connects within 1 sec, it raises a socket.timeout exception
@@ -404,7 +406,7 @@ def run_single_threaded_server():
             # we cancel the timeout so it wont stuck the game
             client_sock.settimeout(None)
 
-            print(f"[TCP] client connected from {addr}")
+            print(f"client connected from {addr}")
             try:
                 # receive the initial request (name and rounds)
                 req_data = recv_exact(client_sock, REQUEST_SIZE)
