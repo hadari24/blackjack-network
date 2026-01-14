@@ -172,9 +172,6 @@ def main():
 
                     if i < 2: # first and second cards (the player's)
                         player_cards.append(card_to_str(card_rank, card_suit))
-                        # debug
-                        print(f"[Debug] Before rank_value: {card_rank}\n")
-                        print(f"[Debug] After rank_value: {rank_value(card_rank)}\n")
 
                         player_ranks.append(rank_value(card_rank))
                     else: # the dealer known card
