@@ -331,7 +331,7 @@ def run_match_for_client(client_sock, rounds):
         # check if player busted before playing (H\S)
         if hand_total(player_hand) > 21:
             player_busted = True
-            
+            dealer_busted = False            
         else:
             # player turn
             player_busted = player_turn(client_sock, deck, player_hand)
@@ -383,7 +383,7 @@ def run_single_threaded_server():
             try:
                 # sending UDP offer for connection
                 offer_msg = pack_offer(SERVER_PORT, SERVER_NAME)
-                udp_sock.sendto(offer_msg, ('127.0.0.1', UDP_DEST_PORT))
+                udp_sock.sendto(offer_msg, ('<broadcast>', UDP_DEST_PORT))
 
                 # wait a sec to see if someone connects
                 # if no connects within 1 sec, it raises a socket.timeout exception

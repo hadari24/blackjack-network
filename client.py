@@ -97,7 +97,7 @@ def listen_to_offer():
     except AttributeError:
         udp_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-    udp_sock.bind(("0.0.0.0", UDP_PORT))
+    udp_sock.bind(("<broadcast>", UDP_PORT))
 
     print("client started, listening for offer requests...") # "player looking for dealer to play with..."
 
@@ -112,7 +112,7 @@ def listen_to_offer():
             if cookie == MAGIC_COOKIE and msg_type == 0x2: # 0x2 is OFFER
                 # clean up the server name string
                 server_name_clean = server_name.strip('\x00')
-                print(f"Received offer from server '{server_name_clean}' at address {addr[0]}, attempting to connect...")
+                print(f"Received offer from server '{server_name_clean}'")
                 
                 return addr[0], server_port
 
@@ -184,7 +184,7 @@ def main():
                 while True:
                     # check if player already busted
                     if hand_total(player_ranks) > 21:
-                        print(f"{client_name} busted! with {player_score} points")
+                        print(f"{client_name} busted! with {hand_total(player_ranks)} points")
                         break
                     choice = input("Hit or Stand? (H/S): ").strip().upper()
                     if choice == "H":
@@ -200,10 +200,6 @@ def main():
                     if decision == "Stand":
                         break
 
-                    # if hand_total(player_ranks) > 21:
-                    #     print(f"{client_name} busted! with {hand_total(player_ranks)} points") # SEND THAT THE PLAYER IS BUSTED
-
-                    # after Hittt server sends ONE new player card (NOTOVER)
                     data = recv_exact(sock, SERVER_PAYLOAD_SIZE)
                     cookie, msg_type, game_result, card_rank, card_suit = unpack_server_payload(data)
 
